@@ -483,8 +483,20 @@ function loop(ts) {
         lives--; updateHUD(); disgustAnim=1; soundDisgust(); combo=0; comboAlpha=0; spawnParticles(it.x, it.y, ['#5a9a3a','#aef542','#c8f076','#7bc950']);
         if (lives <= 0) { soundGameOver(); endGame(); return; }
       } else {
-        score += it.emoji==='⭐'?5:it.emoji==='🐟'?3:1;
-        updateHUD(); eatAnim = 1; if(it.emoji==='⭐') soundStar(); else soundEat();
+        combo++;
+        comboDisplay = combo;
+        comboAlpha = 1;
+        const base = it.emoji==='⭐'?5:it.emoji==='🐟'?3:1;
+        score += base * Math.max(1, combo);
+        updateHUD();
+        eatAnim = 1;
+        const pcols = it.emoji==='⭐'
+          ? ['#ffd700','#fff176','#ffec80','#fff']
+          : it.emoji==='🐟'
+          ? ['#6ec6f5','#a8d8ff','#b0e0ff','#fff']
+          : ['#c4622d','#e8a272','#ffe5b4','#ffb347'];
+        spawnParticles(it.x, it.y, pcols);
+        if (combo >= 2) soundLevelUp(); else if(it.emoji==='⭐') soundStar(); else soundEat();
       }
       continue;
     }
